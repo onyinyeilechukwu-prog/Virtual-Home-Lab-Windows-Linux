@@ -185,31 +185,6 @@ Provisioned Win1 with 60 GB disk, 2 GB RAM, 2 vCPUs. Installed Windows 11 Home/P
 | **Domain Integration** | Joined Windows 11 workstation to Active Directory domain using authorized user credentials |
 | **Security Hardening** | Applied OS updates, disabled accounts, configured firewalls on both Windows and Linux systems |
 
-**RELEVANCE TO SYSTEM ADMINISTRATOR ROLES**
-
-This project directly maps to responsibilities commonly listed in System Administrator and IT Infrastructure job descriptions:
-
-- Active Directory & Identity Management — Core skill for enterprise Windows environments
-- DNS & DHCP Administration — Fundamental networking services managed in all corporate networks
-- Linux Server Management — Critical for hybrid and cloud-adjacent infrastructure roles
-- Virtualization — VMware experience is highly sought in enterprise IT environments
-- Cross-Platform Integration — Demonstrated ability to bridge Windows and Linux ecosystems
-- Security Hardening — Shows awareness of baseline security practices on both platforms
-- Structured Problem-Solving — All phases were planned, documented, and executed systematically
-
-This lab was built entirely from scratch, reflecting the ability to independently research, plan, and implement IT infrastructure — a key attribute for junior to mid-level system administrators.
-
-**SUGGESTED RESUME / PORTFOLIO BULLET POINTS**
-
-**Use these bullet points on your resume or LinkedIn profile:**
-
-- Deployed a multi-VM home lab using VMware Workstation with Windows Server 2022, Ubuntu 22.04, and Windows 11
-- Configured Active Directory Domain Services (AD DS), DNS, and DHCP on Windows Server 2022 for domain ONYINYELAB.COM
-- Promoted Windows Server 2022 to Domain Controller; created OUs, user accounts, and group policies
-- Configured forward and reverse DNS lookup zones; verified resolution using nslookup and PowerShell
-- Set up Samba file sharing on Ubuntu Server 22.04; integrated shared folder access from a domain-joined Windows 11 client
-- Hardened Windows Server 2022 and Ubuntu Server 22.04 through OS patching, account management, and firewall configuration
-- Joined Windows 11 workstation to Active Directory domain using DHCP-assigned IP and authorized AD credentials
 
 _This document was prepared as part of a hands-on IT career development portfolio. All configurations, screenshots, and configurations represent work completed independently in a personal virtual lab environment._
 **Onyinye Ilechukwu**
