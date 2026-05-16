@@ -1,190 +1,380 @@
+# 🖥️ Virtual Home Lab — Windows + Linux Infrastructure
 
-**Virtual Home Lab Project**
+<p align="center">
+  <img src="https://img.shields.io/badge/VMware-Workstation_Pro-607078?style=for-the-badge&logo=vmware&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Windows_Server-2022-0078D4?style=for-the-badge&logo=windows&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Ubuntu_Server-22.04_LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Active_Directory-Domain_Services-0078D4?style=for-the-badge&logo=microsoft&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Status-Completed-2ea44f?style=for-the-badge"/>
+</p>
 
-Windows Server 2022 + Ubuntu 22.04 Enterprise Infrastructure
+---
 
-Domain: ONYINYELAB.COM | 17 Phases | Virtualization & Active Directory | DNS/DHCP | Linux File Sharing
+## 📌 Executive Summary
 
-**EXECUTIVE SUMMARY**
-
-This project demonstrates the end-to-end design, deployment, and administration of a virtualized enterprise IT lab environment. Using VMware Workstation, three virtual machines were built and integrated to simulate a production-ready network: a Windows Server 2022 Domain Controller, an Ubuntu Server 22.04 file server, and a Windows 11 client workstation.
+This project documents the end-to-end design, deployment, and administration of a virtualized enterprise IT lab environment. Using VMware Workstation, three virtual machines were built and integrated to simulate a production-ready network: a **Windows Server 2022 Domain Controller**, an **Ubuntu Server 22.04 file server**, and a **Windows 11 client workstation**.
 
 The project covers the full system administration lifecycle — from OS installation and security hardening, through infrastructure service configuration (Active Directory, DNS, DHCP, Samba), to cross-platform domain integration and file sharing. Each phase reflects tasks performed by real-world IT administrators in enterprise environments.
 
-**PROJECT DETAILS**
+> **Domain:** `ONYINYELAB.COM` &nbsp;|&nbsp; **Network:** `192.168.247.0/24` &nbsp;|&nbsp; **Phases:** 17
 
-|     |     |
-| --- | --- |
-| **Project Title** | Virtual Home Lab – Windows + Linux |
-| **Domain** | ONYINYELAB.COM |
-| **Hypervisor** | VMware Workstation Pro |
-| **Number of Phases** | 17 Phases |
-| **Network Range** | 192.168.247.0/24 |
-| **Project Type** | IT Infrastructure / Home Lab |
-| **Operating Systems** | Windows Server 2022, Ubuntu 22.04 LTS, Windows 11 |
+---
 
-**VIRTUAL MACHINE SPECIFICATIONS**
+## 🌐 Network Topology
 
-**DC1 — Windows Server 2022 (Domain Controller)**
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                       VMware Virtual Network                      │
+│                        192.168.247.0 / 24                         │
+│                                                                    │
+│   ┌─────────────────┐   ┌─────────────────┐   ┌───────────────┐  │
+│   │      DC1        │   │      Log1       │   │     Win1      │  │
+│   │  Windows Server │   │  Ubuntu Server  │   │  Windows 11   │  │
+│   │     2022        │◄──►     22.04       │◄──►   Client      │  │
+│   │                 │   │                 │   │               │  │
+│   │ 192.168.247.10  │   │ 192.168.247.20  │   │  DHCP Lease   │  │
+│   │    (Static)     │   │    (Static)     │   │  .100 – .200  │  │
+│   └────────┬────────┘   └─────────────────┘   └───────┬───────┘  │
+│            │                                           │           │
+│            └──────────── ONYINYELAB.COM ───────────────┘           │
+└──────────────────────────────────────────────────────────────────┘
+```
 
-|     |     |
-| --- | --- |
-| **Role** | Domain Controller / DNS Server / DHCP Server |
-| **IP Address** | 192.168.247.10 (Static) |
-| **Disk** | 60 GB |
-| **RAM** | 4 GB |
-| **CPUs** | 4 vCPUs |
-| **Network** | NAT |
+| VM | Role | IP Address | OS |
+|:---|:---|:---|:---|
+| **DC1** | Domain Controller / DNS / DHCP | `192.168.247.10` (Static) | Windows Server 2022 |
+| **Log1** | Samba File Server | `192.168.247.20` (Static) | Ubuntu Server 22.04 LTS |
+| **Win1** | Domain Client Workstation | `192.168.247.100–200` (DHCP) | Windows 11 |
 
-**Log1 — Ubuntu Server 22.04 (File Server)**
+---
 
-|     |     |
-| --- | --- |
-| **Role** | Samba File Server |
-| **IP Address** | 192.168.247.20 (Static) |
-| **Disk** | 50 GB |
-| **RAM** | 4 GB |
-| **CPUs** | 4 vCPUs |
-| **Network** | NAT |
+## 🖥️ Virtual Machine Specifications
 
-**Win1 — Windows 11 (Domain Client)**
+<details>
+<summary><strong>DC1 — Windows Server 2022 (Domain Controller)</strong></summary>
 
-|     |     |
-| --- | --- |
-| **Role** | Domain-Joined Workstation |
-| **IP Address** | DHCP: 192.168.247.100–200 |
-| **Disk** | 60 GB |
-| **RAM** | 2 GB |
-| **CPUs** | 2 vCPUs |
-| **Network** | NAT |
+| Setting | Value |
+|:---|:---|
+| Role | Domain Controller / DNS Server / DHCP Server |
+| IP Address | 192.168.247.10 (Static) |
+| Disk | 60 GB |
+| RAM | 4 GB |
+| CPUs | 4 vCPUs |
+| Network Adapter | NAT |
 
-**PROJECT PHASES — DETAILED BREAKDOWN**
+</details>
 
-**Phase 1: Environment Setup & ISO Downloads**
+<details>
+<summary><strong>Log1 — Ubuntu Server 22.04 (File Server)</strong></summary>
 
-Installed VMware Workstation Pro. Downloaded official ISO images for all three operating systems:
+| Setting | Value |
+|:---|:---|
+| Role | Samba File Server |
+| IP Address | 192.168.247.20 (Static) |
+| Disk | 50 GB |
+| RAM | 4 GB |
+| CPUs | 4 vCPUs |
+| Network Adapter | NAT |
 
+</details>
+
+<details>
+<summary><strong>Win1 — Windows 11 (Domain Client)</strong></summary>
+
+| Setting | Value |
+|:---|:---|
+| Role | Domain-Joined Workstation |
+| IP Address | DHCP — 192.168.247.100–200 |
+| Disk | 60 GB |
+| RAM | 2 GB |
+| CPUs | 2 vCPUs |
+| Network Adapter | NAT |
+
+</details>
+
+---
+
+## 📋 Project Phases
+
+### Phase 1 — Environment Setup & ISO Downloads
+Installed VMware Workstation Pro and downloaded all required operating system images:
 - Windows Server 2022 (Microsoft Evaluation Center)
 - Ubuntu Server 22.04 LTS (Canonical)
 - Windows 11 (Microsoft)
 
-**Phase 2: Virtual Network Configuration**
+📸 *Screenshot: VMware dashboard with loaded ISOs*
 
-Created a custom VMnet network using VMware's Virtual Network Editor to isolate the lab:
+---
 
-- Adapter Type: Host-Only
-- Subnet IP: 10.10.10.0
-- Subnet Mask: 255.255.255.0
+### Phase 2 — Virtual Network Configuration (VMnet)
+Created a custom isolated VMnet using VMware's Virtual Network Editor:
 
-**Phase 3: Windows Server 2022 VM Creation**
+| Setting | Value |
+|:---|:---|
+| Adapter Type | Host-Only |
+| Subnet IP | 10.10.10.0 |
+| Subnet Mask | 255.255.255.0 |
 
-Provisioned the DC1 VM with 60 GB disk, 4 GB RAM, 4 vCPUs, NAT adapter. Installed Windows Server 2022 Standard (Desktop Experience).
+📸 *Screenshot: VMware Virtual Network Editor*
 
-**Phase 4: Windows Server Security Hardening**
+---
 
-- Applied all Windows Updates via Windows Update
-- Disabled Guest account via Local Security Policy
-- Verified Windows Defender Antivirus is active and updated
-- Enabled Windows Firewall on Domain, Private, and Public profiles
+### Phase 3 — Windows Server 2022 VM Creation
+Provisioned the DC1 virtual machine and installed Windows Server 2022 Standard (Desktop Experience).
 
-**Phase 5: Static IP Configuration — DC1**
+📸 *Screenshot: DC1 hardware settings in VMware*
 
-Configured static IPv4 on the server NIC to ensure reliable DNS and AD DS:
+---
 
-- IP: 192.168.247.10 | Subnet: 255.255.255.0 | Gateway: 192.168.247.2 | DNS: 127.0.0.1
+### Phase 4 — Harden Windows Server 2022
+Applied baseline security hardening before promoting to Domain Controller:
+- ✅ Applied all Windows Updates
+- ✅ Disabled the Guest account via Local Security Policy
+- ✅ Confirmed Windows Defender Antivirus is active
+- ✅ Enabled Windows Firewall on Domain, Private, and Public profiles
 
-**Phase 6: Promote Server to Domain Controller**
+📸 *Screenshot: Windows Security Center — Defender and Firewall active*
 
-- Installed AD DS, DNS, and DHCP roles via Server Manager
-- Ran the AD DS Configuration Wizard
-- Created new forest with root domain: ONYINYELAB.COM
-- Server successfully promoted and restarted as Domain Controller
+---
 
-**Phase 7: DNS Server Configuration**
+### Phase 5 — Static IP Configuration (DC1)
+Assigned a static IPv4 address to ensure stable DNS and AD DS operation:
 
-- Created Forward Lookup Zone: ONYINYELAB.COM
-- Created Reverse Lookup Zone for 192.168.247.x subnet
-- Verified resolution using nslookup and PowerShell Resolve-DnsName
+| Setting | Value |
+|:---|:---|
+| IP Address | 192.168.247.10 |
+| Subnet Mask | 255.255.255.0 |
+| Default Gateway | 192.168.247.2 |
+| Preferred DNS | 127.0.0.1 |
 
-**Phase 8: DHCP Server Configuration**
+📸 *Screenshot: Network Adapter IPv4 settings on DC1*
 
-- Created DHCP scope 'Onyinyab': range 192.168.247.100–200
-- Configured router option: 192.168.247.2
-- Configured DNS option: 192.168.10.10 with domain ONYINYELAB.COM
-- Activated scope and authorized DHCP server in AD
+---
 
-**Phase 9: Organizational Units & User Accounts**
+### Phase 6 — Promote Windows Server to Domain Controller
+Installed AD DS, DNS, and DHCP roles then promoted the server to a DC:
+- Installed **Active Directory Domain Services**, **DNS Server**, and **DHCP Server** roles via Server Manager
+- Ran the AD DS Configuration Wizard to create a new forest
+- Set root domain name: **`ONYINYELAB.COM`**
+- Server restarted and successfully joined the domain
 
-- Created Organizational Units (OUs) to reflect department structure
-- Created domain user accounts with appropriate names, passwords, and OU placement
+📸 *Screenshot: Active Directory Users and Computers — ONYINYELAB.COM*
+
+---
+
+### Phase 7 — DNS Server Configuration
+Configured DNS to support both forward and reverse name resolution:
+- Created **Forward Lookup Zone** → `ONYINYELAB.COM`
+- Created **Reverse Lookup Zone** → `192.168.247.x`
+- Verified DNS resolution using `nslookup` and `Resolve-DnsName` in PowerShell
+
+📸 *Screenshot: DNS Manager with forward and reverse lookup zones*
+
+---
+
+### Phase 8 — DHCP Server Configuration
+Created and activated a DHCP scope to automatically assign IPs to domain clients:
+
+| Setting | Value |
+|:---|:---|
+| Scope Name | Onyinyab |
+| Start IP | 192.168.247.100 |
+| End IP | 192.168.247.200 |
+| Default Gateway | 192.168.247.2 |
+| DNS Server | 192.168.10.10 |
+| DNS Domain | ONYINYELAB.COM |
+
+📸 *Screenshot: DHCP Manager — active scope and lease assignments*
+
+---
+
+### Phase 9 — Organizational Units & User Accounts
+Structured Active Directory with OUs and domain user accounts:
+- Created Organizational Units to reflect department structure
+- Created domain user accounts with names, passwords, and OU placement
 - Assigned users to security groups for resource access control
 
-**Phase 10: Ubuntu Server 22.04 VM Creation**
+📸 *Screenshot: Active Directory Users and Computers — OUs and users*
 
-Provisioned Log1 VM with 50 GB disk, 4 GB RAM, 4 vCPUs, NAT adapter. Performed base Ubuntu Server install.
+---
 
-**Phase 11: Ubuntu Server Security Hardening**
+### Phase 10 — Ubuntu Server 22.04 VM Creation
+Provisioned the Log1 virtual machine and performed a base Ubuntu Server installation.
 
-- Updated OS: sudo apt update && sudo apt upgrade -y
-- Disabled guest account and restricted unnecessary services
-- Reviewed sshd_config for secure remote access settings
+📸 *Screenshot: Log1 hardware summary in VMware*
 
-**Phase 12: Static IP Configuration — Log1**
+---
 
-Configured static IP via Netplan configuration file:
+### Phase 11 — Harden Ubuntu Server 22.04
+Applied security hardening before configuring services:
+- ✅ Updated OS: `sudo apt update && sudo apt upgrade -y`
+- ✅ Disabled guest account
+- ✅ Reviewed and restricted SSH access in `sshd_config`
 
-- IP: 192.168.247.20 | Subnet: /24 | Gateway: 192.168.247.2 | DNS: 192.168.10.10
-- Applied config with: sudo netplan apply
+📸 *Screenshot: Terminal output — system fully updated*
 
-**Phase 13: Samba File Sharing Setup**
+---
 
-- Installed Samba: sudo apt install samba
-- Created shared directory: /srv/samba/shared
-- Configured /etc/samba/smb.conf with share name, path, and access controls
-- Added Samba users and restarted smbd service
-- Configured UFW firewall to allow Samba traffic
+### Phase 12 — Static IP Configuration (Log1)
+Configured a static IP address via Netplan:
 
-**Phase 14: Windows 11 VM Creation**
+| Setting | Value |
+|:---|:---|
+| IP Address | 192.168.247.20 |
+| Subnet Mask | 255.255.255.0 (/24) |
+| Default Gateway | 192.168.247.2 |
+| DNS Server | 192.168.10.10 |
 
-Provisioned Win1 with 60 GB disk, 2 GB RAM, 2 vCPUs. Installed Windows 11 Home/Pro.
+```yaml
+# /etc/netplan/00-installer-config.yaml
+network:
+  ethernets:
+    ens33:
+      dhcp4: no
+      addresses: [192.168.247.20/24]
+      gateway4: 192.168.247.2
+      nameservers:
+        addresses: [192.168.10.10]
+  version: 2
+```
 
-**Phase 15: Windows 11 Security Hardening**
+📸 *Screenshot: `ip addr` output confirming static IP on Log1*
 
-- Applied all Windows Updates
-- Confirmed Windows Defender Antivirus active and scanning
-- Verified Windows Firewall enabled on all network profiles
+---
 
-**Phase 16: Join Windows 11 to Domain**
+### Phase 13 — Samba File Sharing Setup
+Installed and configured Samba to provide SMB/CIFS file sharing accessible from Windows clients:
 
-- Verified DHCP assigned IP in range 192.168.247.100–200
-- Navigated to System > Advanced System Settings > Computer Name > Change
-- Entered domain name: ONYINYELAB.COM
-- Authenticated with Active Directory user account created in Phase 9
-- Restarted Win1 and logged in with domain credentials
+```bash
+# Install Samba
+sudo apt install samba -y
 
-**Phase 17: Access Samba Share from Domain Client**
+# Create shared directory
+sudo mkdir -p /srv/samba/shared
+sudo chmod 777 /srv/samba/shared
+```
 
-- Opened File Explorer on Win1 > Map Network Drive
-- Entered UNC path: \\\\192.168.247.20\\Shared
-- Authenticated with Samba user account credentials
-- Successfully accessed, read, and wrote files to the shared folder
+```ini
+# /etc/samba/smb.conf
+[Shared]
+   path = /srv/samba/shared
+   browseable = yes
+   read only = no
+   guest ok = no
+   valid users = @sambausers
+```
 
-**TECHNICAL SKILLS DEMONSTRATED**
+```bash
+sudo systemctl restart smbd
+sudo ufw allow samba
+```
 
-|     |     |
-| --- | --- |
-| **Skill** | **Description** |
-| **Virtualization** | Deployed and managed 3 VMs using VMware Workstation Pro; configured virtual hardware, networking, and storage |
-| **Network Segmentation** | Designed isolated virtual networks using VMnet Host-Only adapters; planned IP address scheme |
-| **Windows Server Admin** | Installed, configured, and hardened Windows Server 2022; managed server roles and features |
-| **Linux Administration** | Installed and managed Ubuntu Server 22.04; used CLI for configuration, networking, and services |
-| **Active Directory** | Promoted server to DC; created OUs, user accounts, and managed group memberships |
-| **DNS Configuration** | Configured forward and reverse lookup zones; verified resolution via nslookup and PowerShell |
-| **DHCP Configuration** | Created and activated DHCP scopes; configured IP pools, gateway, DNS, and domain options |
-| **File Sharing (Samba)** | Configured cross-platform SMB/CIFS file sharing between Ubuntu and Windows systems |
-| **Domain Integration** | Joined Windows 11 workstation to Active Directory domain using authorized user credentials |
-| **Security Hardening** | Applied OS updates, disabled accounts, configured firewalls on both Windows and Linux systems |
+📸 *Screenshot: Samba config and `systemctl status smbd` output*
 
+---
 
-_This document was prepared as part of a hands-on IT career development portfolio. All configurations, screenshots, and configurations represent work completed independently in a personal virtual lab environment._
-**Onyinye Ilechukwu**
+### Phase 14 — Windows 11 VM Creation
+Provisioned the Win1 virtual machine and installed Windows 11.
+
+📸 *Screenshot: Win1 hardware settings in VMware*
+
+---
+
+### Phase 15 — Harden Windows 11 Client
+- ✅ Applied all Windows Updates
+- ✅ Confirmed Windows Defender Antivirus is active
+- ✅ Verified Windows Firewall enabled on all network profiles
+
+📸 *Screenshot: Windows Security dashboard on Win1*
+
+---
+
+### Phase 16 — Join Windows 11 to Domain
+Joined Win1 to `ONYINYELAB.COM` using an authorized Active Directory account:
+- DHCP assigned an IP in the `192.168.247.100–200` range
+- Navigated to **System > Advanced System Settings > Computer Name > Change**
+- Entered domain: `ONYINYELAB.COM` and authenticated with AD credentials
+- Restarted and logged in with domain user account
+
+📸 *Screenshot: System Properties — Win1 joined to ONYINYELAB.COM*
+
+---
+
+### Phase 17 — Access Samba Share from Domain Client
+Accessed the Ubuntu Samba share from Win1 using authorized credentials:
+- Opened **File Explorer → Map Network Drive**
+- Entered UNC path: `\\192.168.247.20\Shared`
+- Authenticated with Samba user credentials
+- Successfully read and wrote files to the shared folder
+
+📸 *Screenshot: Mapped network drive on Win1 showing Samba share*
+
+---
+
+## 🎯 Technical Skills Demonstrated
+
+| Skill | What Was Done |
+|:---|:---|
+| **Virtualization** | Deployed and managed 3 VMs in VMware Workstation; configured virtual hardware, networking, and storage |
+| **Network Segmentation** | Designed isolated virtual networks using VMnet adapters; planned and implemented IP addressing scheme |
+| **Windows Server Administration** | Installed, configured, and hardened Windows Server 2022; managed server roles and features |
+| **Linux Administration** | Deployed Ubuntu Server 22.04; used CLI for configuration, networking, and service management |
+| **Active Directory** | Promoted server to Domain Controller; created OUs, user accounts, and managed group memberships |
+| **DNS Configuration** | Configured forward and reverse lookup zones; verified name resolution via nslookup and PowerShell |
+| **DHCP Configuration** | Created and activated DHCP scope; configured IP pools, gateway, DNS server, and domain options |
+| **Samba / File Sharing** | Configured cross-platform SMB/CIFS file sharing between Ubuntu and Windows systems |
+| **Domain Integration** | Joined Windows 11 workstation to Active Directory domain using authorized AD credentials |
+| **Security Hardening** | Applied OS patching, disabled accounts, and configured firewalls on both Windows and Linux |
+
+---
+
+## 💼 Relevance to System Administrator Roles
+
+This project directly maps to responsibilities commonly listed in System Administrator and IT Infrastructure job descriptions:
+
+- **Active Directory & Identity Management** — Core skill for enterprise Windows environments
+- **DNS & DHCP Administration** — Fundamental networking services managed in all corporate networks
+- **Linux Server Management** — Critical for hybrid and cloud-adjacent infrastructure roles
+- **Virtualization** — VMware experience is highly sought in enterprise IT environments
+- **Cross-Platform Integration** — Demonstrated ability to bridge Windows and Linux ecosystems
+- **Security Hardening** — Shows awareness of baseline security practices on both platforms
+- **Structured Problem-Solving** — All phases were planned, documented, and executed systematically
+
+> This lab was built entirely from scratch, reflecting the ability to independently research, plan, and implement IT infrastructure — a key attribute for junior to mid-level system administrators.
+
+---
+
+## 📁 Repository Structure
+
+```
+virtual-home-lab/
+├── README.md
+├── docs/
+│   └── Virtual_Home_Lab_Project_Documentation.docx
+├── screenshots/
+│   ├── phase01-vmware-setup.png
+│   ├── phase02-vmnet-config.png
+│   ├── phase03-dc1-vm.png
+│   ├── phase04-hardening.png
+│   ├── phase05-static-ip-dc1.png
+│   ├── phase06-active-directory.png
+│   ├── phase07-dns.png
+│   ├── phase08-dhcp.png
+│   ├── phase09-ou-users.png
+│   ├── phase10-log1-vm.png
+│   ├── phase11-ubuntu-hardening.png
+│   ├── phase12-static-ip-log1.png
+│   ├── phase13-samba.png
+│   ├── phase14-win1-vm.png
+│   ├── phase15-win11-hardening.png
+│   ├── phase16-domain-join.png
+│   └── phase17-samba-access.png
+└── configs/
+    ├── netplan-log1.yaml
+    └── smb.conf
+```
+
+---
+
+*Built as part of a hands-on IT career development portfolio — demonstrating real-world system administration skills in a virtualized lab environment.*
+
