@@ -328,18 +328,6 @@ Accessed the Ubuntu Samba share from Win1 using authorized credentials:
 
 ---
 
-## 💼 Relevance to System Administrator Roles
-
-This project directly maps to responsibilities commonly listed in System Administrator and IT Infrastructure job descriptions:
-
-- **Active Directory & Identity Management** — Core skill for enterprise Windows environments
-- **DNS & DHCP Administration** — Fundamental networking services managed in all corporate networks
-- **Linux Server Management** — Critical for hybrid and cloud-adjacent infrastructure roles
-- **Virtualization** — VMware experience is highly sought in enterprise IT environments
-- **Cross-Platform Integration** — Demonstrated ability to bridge Windows and Linux ecosystems
-- **Security Hardening** — Shows awareness of baseline security practices on both platforms
-- **Structured Problem-Solving** — All phases were planned, documented, and executed systematically
-
 > This lab was built entirely from scratch, reflecting the ability to independently research, plan, and implement IT infrastructure — a key attribute for junior to mid-level system administrators.
 
 ---
